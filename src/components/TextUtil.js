@@ -37,6 +37,9 @@ export default function TextUtil() {
     document.querySelector(".inpTextBox").select();
     document.execCommand("copy");
   };
+  const clearText = () =>{
+    setText("")
+  }
   const convertLeetText = () => {
     setText(convertInput(text));
   };
@@ -151,6 +154,7 @@ export default function TextUtil() {
       </div>
       <div className="utilitiesBox mb-3">
         <Button function={copyText} text="Copy Text" />
+        <Button function={clearText} text="Clear Text" />
         <Button function={convertUpText} text="Uppercase" />
         <Button function={convertLoText} text="Lowercase" />
         <Button function={convertCapText} text="Capitalize" />
