@@ -10,11 +10,10 @@ export default function TextUtil() {
   const [text, setText] = useState("");
   const inpBox = document.querySelector(".inpTextBox");
 
-  const getSelection = () => {
-    let indexStart = inpBox.selectionStart || 0;
-    let indexEnd = inpBox.selectionEnd || 0;
-    console.log({ start: indexStart, end: indexEnd });
-    return { start: indexStart, end: indexEnd };
+  const hasText = () => {
+    if (text.length > 0) {
+      return true;
+    } else return false;
   };
 
   const handleChange = (e) => {
@@ -29,96 +28,114 @@ export default function TextUtil() {
     return splitText.length >= 1 ? splitText.length : "0";
   };
 
-  const convertLoText = () => {
-    let selection = getSelection();
-    if (selection.start === selection.end) {
-      setText(text.toLowerCase());
-    } else {
-      let lowercaseText = text
-        .slice(selection.start, selection.end)
-        .toLowerCase();
-      setText(
-        text.substr(0, selection.start) +
-          lowercaseText +
-          text.substr(selection.end)
-      );
+  const getSelection = () => {
+    if (hasText) {
+      let indexStart = inpBox.selectionStart || 0;
+      let indexEnd = inpBox.selectionEnd || 0;
+      return { start: indexStart, end: indexEnd };
     }
   };
+
+  const convertLoText = () => {
+    if (hasText) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(text.toLowerCase());
+      } else {
+        let lowercaseText = text
+          .slice(selection.start, selection.end)
+          .toLowerCase();
+        setText(
+          text.substr(0, selection.start) +
+            lowercaseText +
+            text.substr(selection.end)
+        );
+      }
+    }
+  };
+
   const convertUpText = () => {
-    let selection = getSelection();
-    if (selection.start === selection.end) {
-      setText(text.toUpperCase());
-    } else {
-      let uppercaseText = text
-        .slice(selection.start, selection.end)
-        .toUpperCase();
-      setText(
-        text.substr(0, selection.start) +
-          uppercaseText +
-          text.substr(selection.end)
-      );
+    if (hasText) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(text.toUpperCase());
+      } else {
+        let uppercaseText = text
+          .slice(selection.start, selection.end)
+          .toUpperCase();
+        setText(
+          text.substr(0, selection.start) +
+            uppercaseText +
+            text.substr(selection.end)
+        );
+      }
     }
   };
   const convertCapText = () => {
-    let selection = getSelection();
-    if (selection.start === selection.end) {
-      setText(
-        text.replace(/\w\S*/g, function (txt) {
-          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        })
-      );
-    } else {
-      let cappedText = text
-        .slice(selection.start, selection.end)
-        .replace(/\w\S*/g, function (txt) {
-          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        });
-      setText(
-        text.substr(0, selection.start) +
-          cappedText +
-          text.substr(selection.end)
-      );
+    if (hasText) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(
+          text.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          })
+        );
+      } else {
+        let cappedText = text
+          .slice(selection.start, selection.end)
+          .replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          });
+        setText(
+          text.substr(0, selection.start) +
+            cappedText +
+            text.substr(selection.end)
+        );
+      }
     }
   };
   const copyText = async () => {
-    let selection = getSelection();
-    if (selection.start === selection.end) {
-      await navigator.clipboard.writeText(
-        inpBox.value
-      );
-    } else {
-      let slicedText = text
-      .slice(selection.start, selection.end)
-      await navigator.clipboard.writeText(
-        slicedText
-      );
+    if (hasText) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        await navigator.clipboard.writeText(inpBox.value);
+      } else {
+        let slicedText = text.slice(selection.start, selection.end);
+        await navigator.clipboard.writeText(slicedText);
+      }
     }
   };
   const clearText = () => {
-    let selection = getSelection();
-    if (selection.start === selection.end) {
-      setText("");
-    } else {
-      setText(text.substr(0, selection.start) + text.substr(selection.end));
+    if (hasText) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText("");
+      } else {
+        setText(text.substr(0, selection.start) + text.substr(selection.end));
+      }
     }
   };
   const convertLeetText = () => {
-    let selection = getSelection();
-    if (selection.start === selection.end) {
-      setText(convertInput(text));
-    } else {
-      let leetedText = convertInput(text
-      .slice(selection.start, selection.end))
-      setText(
-        text.substr(0, selection.start) +
-        leetedText +
-          text.substr(selection.end)
-      );
+    if (hasText) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(convertInput(text));
+      } else {
+        let leetedText = convertInput(
+          text.slice(selection.start, selection.end)
+        );
+        setText(
+          text.substr(0, selection.start) +
+            leetedText +
+            text.substr(selection.end)
+        );
+      }
     }
-    
   };
   const convertTextLeet = () => {
-    setText(convertInputReverse(text));
+    if (hasText) {
+      setText(convertInputReverse(text));
+    }
   };
   const convertInvCapText = () => {
     let result = "";
