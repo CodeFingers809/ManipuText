@@ -11,9 +11,16 @@ export default function TextUtil() {
   const inpBox = document.querySelector(".inpTextBox");
 
   const hasText = () => {
-    if (text.length > 0) {
+    if (text.length) {
       return true;
-    } else return false;
+    } else {
+      document.querySelector(
+        ".emptyAlert"
+      ).innerHTML += `<div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Error!</strong> Please enter some text first!
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>`;
+    }
   };
 
   const handleChange = (e) => {
@@ -29,7 +36,7 @@ export default function TextUtil() {
   };
 
   const getSelection = () => {
-    if (hasText) {
+    if (hasText()) {
       let indexStart = inpBox.selectionStart || 0;
       let indexEnd = inpBox.selectionEnd || 0;
       return { start: indexStart, end: indexEnd };
@@ -37,7 +44,7 @@ export default function TextUtil() {
   };
 
   const convertLoText = () => {
-    if (hasText) {
+    if (hasText()) {
       let selection = getSelection();
       if (selection.start === selection.end) {
         setText(text.toLowerCase());
@@ -55,7 +62,7 @@ export default function TextUtil() {
   };
 
   const convertUpText = () => {
-    if (hasText) {
+    if (hasText()) {
       let selection = getSelection();
       if (selection.start === selection.end) {
         setText(text.toUpperCase());
@@ -72,7 +79,7 @@ export default function TextUtil() {
     }
   };
   const convertCapText = () => {
-    if (hasText) {
+    if (hasText()) {
       let selection = getSelection();
       if (selection.start === selection.end) {
         setText(
@@ -95,7 +102,7 @@ export default function TextUtil() {
     }
   };
   const copyText = async () => {
-    if (hasText) {
+    if (hasText()) {
       let selection = getSelection();
       if (selection.start === selection.end) {
         await navigator.clipboard.writeText(inpBox.value);
@@ -106,7 +113,7 @@ export default function TextUtil() {
     }
   };
   const clearText = () => {
-    if (hasText) {
+    if (hasText()) {
       let selection = getSelection();
       if (selection.start === selection.end) {
         setText("");
@@ -116,7 +123,7 @@ export default function TextUtil() {
     }
   };
   const convertLeetText = () => {
-    if (hasText) {
+    if (hasText()) {
       let selection = getSelection();
       if (selection.start === selection.end) {
         setText(convertInput(text));
@@ -133,7 +140,7 @@ export default function TextUtil() {
     }
   };
   const convertTextLeet = () => {
-    if (hasText) {
+    if (hasText()) {
       setText(convertInputReverse(text));
     }
   };
@@ -237,6 +244,7 @@ export default function TextUtil() {
         To use a tool only on a particular part of the text, first select the
         part of the text and then click on any tool!
       </div>
+      <div className="emptyAlert"></div>
       <div className="mb-2">
         <textarea
           className="form-control inpTextBox"
