@@ -1,3 +1,4 @@
+// import useUndo from'@nkavtaradze/use-undo-hook';
 import { useState } from "react";
 import {
   convertInput,
@@ -7,6 +8,14 @@ import Button from "./Button";
 
 export default function TextUtil() {
   const [text, setText] = useState("");
+  const inpBox = document.querySelector(".inpTextBox");
+
+  const getSelection = () => {
+    let indexStart = inpBox.selectionStart || 0;
+    let indexEnd = inpBox.selectionEnd || 0;
+    console.log({ start: indexStart, end: indexEnd });
+    return { start: indexStart, end: indexEnd };
+  };
 
   const handleChange = (e) => {
     setText(e.target.value);
@@ -21,27 +30,92 @@ export default function TextUtil() {
   };
 
   const convertLoText = () => {
-    setText(text.toLowerCase());
+    let selection = getSelection();
+    if (selection.start === selection.end) {
+      setText(text.toLowerCase());
+    } else {
+      let lowercaseText = text
+        .slice(selection.start, selection.end)
+        .toLowerCase();
+      setText(
+        text.substr(0, selection.start) +
+          lowercaseText +
+          text.substr(selection.end)
+      );
+    }
   };
   const convertUpText = () => {
-    setText(text.toUpperCase());
+    let selection = getSelection();
+    if (selection.start === selection.end) {
+      setText(text.toUpperCase());
+    } else {
+      let uppercaseText = text
+        .slice(selection.start, selection.end)
+        .toUpperCase();
+      setText(
+        text.substr(0, selection.start) +
+          uppercaseText +
+          text.substr(selection.end)
+      );
+    }
   };
   const convertCapText = () => {
-    setText(
-      text.replace(/\w\S*/g, function (txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-      })
-    );
+    let selection = getSelection();
+    if (selection.start === selection.end) {
+      setText(
+        text.replace(/\w\S*/g, function (txt) {
+          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        })
+      );
+    } else {
+      let cappedText = text
+        .slice(selection.start, selection.end)
+        .replace(/\w\S*/g, function (txt) {
+          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+      setText(
+        text.substr(0, selection.start) +
+          cappedText +
+          text.substr(selection.end)
+      );
+    }
   };
-  const copyText = () => {
-    document.querySelector(".inpTextBox").select();
-    document.execCommand("copy");
+  const copyText = async () => {
+    let selection = getSelection();
+    if (selection.start === selection.end) {
+      await navigator.clipboard.writeText(
+        inpBox.value
+      );
+    } else {
+      let slicedText = text
+      .slice(selection.start, selection.end)
+      await navigator.clipboard.writeText(
+        slicedText
+      );
+    }
   };
-  const clearText = () =>{
-    setText("")
-  }
+  const clearText = () => {
+    let selection = getSelection();
+    if (selection.start === selection.end) {
+      setText("");
+    } else {
+      setText(text.substr(0, selection.start) + text.substr(selection.end));
+    }
+  };
   const convertLeetText = () => {
-    setText(convertInput(text));
+    let selection = getSelection();
+    if (selection.start === selection.end) {
+      setText(convertInput(text));
+    } else {
+      let leetedText = convertInput(text
+      .slice(selection.start, selection.end))
+      setText(
+        text.substr(0, selection.start) +
+        leetedText +
+          text.substr(selection.end)
+      );
+    }
+    
   };
   const convertTextLeet = () => {
     setText(convertInputReverse(text));
@@ -70,18 +144,18 @@ export default function TextUtil() {
     }
     setText(result);
   };
-  const convertAltCapText=()=>{
-    let result=""
-    for(let i in text){
-      let letter = text[i]
-      if(i%2===0){
-        result+=letter.toUpperCase()
-      }else{
-        result+=letter.toLowerCase()
+  const convertAltCapText = () => {
+    let result = "";
+    for (let i in text) {
+      let letter = text[i];
+      if (i % 2 === 0) {
+        result += letter.toUpperCase();
+      } else {
+        result += letter.toLowerCase();
       }
     }
-    setText(result)
-  }
+    setText(result);
+  };
   const remExtSpaces = () => {
     let splitText = text;
     splitText = splitText.replaceAll(/^\s*$(?:\r\n?|\n)/gm, " ");
@@ -142,7 +216,11 @@ export default function TextUtil() {
 
   return (
     <div className="container p-4">
-      <div className="mb-3">
+      <div className="selectInfo text-center mb-3 alert alert-primary">
+        To use a tool only on a particular part of the text, first select the
+        part of the text and then click on any tool!
+      </div>
+      <div className="mb-2">
         <textarea
           className="form-control inpTextBox"
           id="exampleFormControlTextarea1"
@@ -150,9 +228,13 @@ export default function TextUtil() {
           placeholder="Enter text here"
           value={text}
           onChange={handleChange}
+          // ref={element}
         />
       </div>
-      <div className="utilitiesBox mb-3">
+      <div className="textInfo h5 mb-3">
+        Your text has {length()} words and {text.length} letters.
+      </div>
+      <div className="utilitiesBox d-flex flex-wrap">
         <Button function={copyText} text="Copy Text" />
         <Button function={clearText} text="Clear Text" />
         <Button function={convertUpText} text="Uppercase" />
@@ -169,9 +251,6 @@ export default function TextUtil() {
         <Button function={convertBinaryText} text="To Binary" />
         <Button function={convertOctText} text="To Octal" />
         <Button function={convertHexText} text="To Hexadecimal" />
-      </div>
-      <div className="textInfo">
-        Your text has {length()} words and {text.length} letters.
       </div>
     </div>
   );

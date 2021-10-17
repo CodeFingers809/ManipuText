@@ -1,7 +1,7 @@
-import './App.css';
-import Credits from './components/Credits';
-import Navbar from './components/Navbar';
-import TextUtil from './components/TextUtil';
+import "./App.css";
+import Navbar from "./components/Navbar";
+import TextUtil from "./components/TextUtil";
+import Credits from "./components/Credits"
 
 function App() {
   return (
