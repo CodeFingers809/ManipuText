@@ -10,6 +10,14 @@ export default function TextUtil() {
   const [text, setText] = useState("");
   const inpBox = document.querySelector(".inpTextBox");
 
+  const handleBlur = () => {
+    document
+      .querySelector(".inpTextBox")
+      .addEventListener("focusout", function () {
+        this.focus();
+      });
+  };
+
   const hasText = () => {
     if (text.length) {
       return true;
@@ -141,119 +149,291 @@ export default function TextUtil() {
   };
   const convertTextLeet = () => {
     if (hasText()) {
-      setText(convertInputReverse(text));
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(convertInputReverse(text));
+      } else {
+        let textedLeet = convertInputReverse(
+          text.slice(selection.start, selection.end)
+        );
+        setText(
+          text.substr(0, selection.start) +
+            textedLeet +
+            text.substr(selection.end)
+        );
+      }
     }
   };
   const convertInvCapText = () => {
-    let result = "";
-    for (let i in text) {
-      let letter = text[i];
-      if (letter === letter.toLowerCase()) {
-        result += letter.toUpperCase();
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        let result = "";
+        for (let i in text) {
+          let letter = text[i];
+          if (letter === letter.toLowerCase()) {
+            result += letter.toUpperCase();
+          } else {
+            result += letter.toLowerCase();
+          }
+        }
+        setText(result);
       } else {
-        result += letter.toLowerCase();
+        let result = "";
+        let slicedText = text.slice(selection.start, selection.end);
+        for (let i in slicedText) {
+          let letter = slicedText[i];
+          if (letter === letter.toLowerCase()) {
+            result += letter.toUpperCase();
+          } else {
+            result += letter.toLowerCase();
+          }
+        }
+        setText(
+          text.substr(0, selection.start) + result + text.substr(selection.end)
+        );
       }
     }
-    setText(result);
   };
   const convertToggText = () => {
-    let result = "";
-    for (let i in text) {
-      let letter = text[i];
-      if (Math.random() < 0.7) {
-        result += letter.toLowerCase();
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        let result = "";
+        for (let i in text) {
+          let letter = text[i];
+          if (Math.random() < 0.7) {
+            result += letter.toLowerCase();
+          } else {
+            result += letter.toUpperCase();
+          }
+        }
+        setText(result);
       } else {
-        result += letter.toUpperCase();
+        let result = "";
+        let slicedText = text.slice(selection.start, selection.end);
+        for (let i in slicedText) {
+          let letter = slicedText[i];
+          if (Math.random() < 0.7) {
+            result += letter.toLowerCase();
+          } else {
+            result += letter.toUpperCase();
+          }
+        }
+        setText(
+          text.substr(0, selection.start) + result + text.substr(selection.end)
+        );
       }
     }
-    setText(result);
   };
   const convertAltCapText = () => {
-    let result = "";
-    for (let i in text) {
-      let letter = text[i];
-      if (i % 2 === 0) {
-        result += letter.toUpperCase();
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        let result = "";
+        for (let i in text) {
+          let letter = text[i];
+          if (i % 2 === 0) {
+            result += letter.toUpperCase();
+          } else {
+            result += letter.toLowerCase();
+          }
+        }
+        setText(result);
       } else {
-        result += letter.toLowerCase();
+        let result = "";
+        let slicedText = text.slice(selection.start, selection.end);
+        for (let i in slicedText) {
+          let letter = slicedText[i];
+          if (i % 2 === 0) {
+            result += letter.toUpperCase();
+          } else {
+            result += letter.toLowerCase();
+          }
+        }
+        setText(
+          text.substr(0, selection.start) + result + text.substr(selection.end)
+        );
       }
     }
-    setText(result);
   };
   const remExtSpaces = () => {
-    let splitText = text;
-    splitText = splitText.replaceAll(/^\s*$(?:\r\n?|\n)/gm, " ");
-    splitText = splitText.replaceAll("\n", " ");
-    splitText = splitText.replaceAll("\t", " ");
-    splitText = splitText
-      .trim()
-      .split(" ")
-      .filter(function (n) {
-        return n !== "";
-      })
-      .join(" ");
-    setText(splitText);
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        let splitText = text;
+        splitText = splitText.replaceAll(/^\s*$(?:\r\n?|\n)/gm, " ");
+        splitText = splitText.replaceAll("\n", " ");
+        splitText = splitText.replaceAll("\t", " ");
+        splitText = splitText
+          .trim()
+          .split(" ")
+          .filter(function (n) {
+            return n !== "";
+          })
+          .join(" ");
+        setText(splitText);
+      } else {
+        let slicedText = text.slice(selection.start, selection.end);
+        slicedText = slicedText.replaceAll(/^\s*$(?:\r\n?|\n)/gm, " ");
+        slicedText = slicedText.replaceAll("\n", " ");
+        slicedText = slicedText.replaceAll("\t", " ");
+        slicedText = slicedText
+          .trim()
+          .split(" ")
+          .filter(function (n) {
+            return n !== "";
+          })
+          .join(" ");
+        setText(
+          text.substr(0, selection.start) +
+            slicedText +
+            text.substr(selection.end)
+        );
+      }
+    }
   };
   const shuffleText = () => {
-    setText(
-      text
-        .split("")
-        .sort(function () {
-          return 0.5 - Math.random();
-        })
-        .join("")
-    );
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(
+          text
+            .split("")
+            .sort(function () {
+              return 0.5 - Math.random();
+            })
+            .join("")
+        );
+      } else {
+        let slicedText = text.slice(selection.start, selection.end);
+        setText(
+          text.substr(0, selection.start) +
+            slicedText
+              .split("")
+              .sort(function () {
+                return 0.5 - Math.random();
+              })
+              .join("") +
+            text.substr(selection.end)
+        );
+      }
+    }
   };
   const reverseText = () => {
-    setText(text.split("").reverse().join(""));
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(text.split("").reverse().join(""));
+      } else {
+        let slicedText = text.slice(selection.start, selection.end);
+        setText(
+          text.substr(0, selection.start) +
+            slicedText.split("").reverse().join("") +
+            text.substr(selection.end)
+        );
+      }
+    }
   };
   const convertBinaryText = () => {
-    setText(
-      text
-        .split("")
-        .map(function (char) {
-          return char.charCodeAt(0).toString(2);
-        })
-        .join(" ")
-    );
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(
+          text
+            .split("")
+            .map(function (char) {
+              return char.charCodeAt(0).toString(2);
+            })
+            .join(" ")
+        );
+      } else {
+        let slicedText = text.slice(selection.start, selection.end);
+        setText(
+          text.substr(0, selection.start) +
+            slicedText
+              .split("")
+              .map(function (char) {
+                return char.charCodeAt(0).toString(2);
+              })
+              .join(" ") +
+            text.substr(selection.end)
+        );
+      }
+    }
   };
   const convertOctText = () => {
-    setText(
-      text
-        .split("")
-        .map(function (char) {
-          return char.charCodeAt(0).toString(8);
-        })
-        .join(" ")
-    );
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(
+          text
+            .split("")
+            .map(function (char) {
+              return char.charCodeAt(0).toString(8);
+            })
+            .join(" ")
+        );
+      } else {
+        let slicedText = text.slice(selection.start, selection.end);
+        setText(
+          text.substr(0, selection.start) +
+            slicedText
+              .split("")
+              .map(function (char) {
+                return char.charCodeAt(0).toString(8);
+              })
+              .join(" ") +
+            text.substr(selection.end)
+        );
+      }
+    }
   };
   const convertHexText = () => {
-    setText(
-      text
-        .split("")
-        .map(function (char) {
-          return char.charCodeAt(0).toString(16);
-        })
-        .join(" ")
-    );
+    if (hasText()) {
+      let selection = getSelection();
+      if (selection.start === selection.end) {
+        setText(
+          text
+            .split("")
+            .map(function (char) {
+              return char.charCodeAt(0).toString(16);
+            })
+            .join(" ")
+        );
+      } else {
+        let slicedText = text.slice(selection.start, selection.end);
+        setText(
+          text.substr(0, selection.start) +
+            slicedText
+              .split("")
+              .map(function (char) {
+                return char.charCodeAt(0).toString(16);
+              })
+              .join(" ") +
+            text.substr(selection.end)
+        );
+      }
+    }
   };
 
   return (
     <div className="container p-4">
       <div className="selectInfo text-center mb-3 alert alert-primary">
         To use a tool only on a particular part of the text, first select the
-        part of the text and then click on any tool!
+        part of the text and then click on the tool!
       </div>
       <div className="emptyAlert"></div>
       <div className="mb-2">
         <textarea
+        spellCheck="false"
           className="form-control inpTextBox"
           id="exampleFormControlTextarea1"
           rows="8"
           placeholder="Enter text here"
           value={text}
           onChange={handleChange}
-          // ref={element}
+          onBlur={handleBlur}
         />
       </div>
       <div className="textInfo h5 mb-3">
